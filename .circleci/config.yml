@@ -150,47 +150,47 @@ jobs:
   #     - save_cache:
   #         paths: [backend/node_modules]
   #         key: backend-scan
-  # deploy-infrastructure:
-  #   docker:
-  #     # Docker image here that supports AWS CLI
-  #     - image: amazon/aws-cli
-  #   steps:
-  #     # Checkout code from git
-  #     - checkout
-  #     - run: yum install -y tar gzip
-  #     - run:
-  #         name: Ensure back-end infrastructure exists
-  #         command: |
-  #           aws cloudformation deploy \
-  #             --template-file .circleci/files/backend.yml \
-  #             --tags project=udapeople \
-  #             --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-  #             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+  deploy-infrastructure:
+    docker:
+      # Docker image here that supports AWS CLI
+      - image: amazon/aws-cli
+    steps:
+      # Checkout code from git
+      - checkout
+      - run: yum install -y tar gzip
+      - run:
+          name: Ensure back-end infrastructure exists
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \
+              --tags project=udapeople \
+              --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
               
-  #     - run:
-  #         name: Ensure front-end infrastructure exist
-  #         command: |
-  #           aws cloudformation deploy \
-  #             --template-file .circleci/files/frontend.yml \
-  #             --tags project=udapeople \
-  #             --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
-  #             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+      - run:
+          name: Ensure front-end infrastructure exist
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \
+              --tags project=udapeople \
+              --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
       
-  #     - run:
-  #         name: Add back-end ip to ansible inventory
-  #         command: |
-  #           # Your code here
-  #           aws ec2 describe-instances \
-  #             --query 'Reservations[*].Instances[*].PublicIpAddress' \
-  #             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-  #             --output text >> .circleci/ansible/inventory.txt
-  #           cat .circleci/ansible/inventory.txt
-  #     - persist_to_workspace:
-  #         root: .circleci/ansible/
-  #         paths:
-  #           - inventory.txt
-  #     # Here's where you will add some code to rollback on failure      
-  #     - destroy-environment
+      - run:
+          name: Add back-end ip to ansible inventory
+          command: |
+            # Your code here
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --output text >> .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
+      - persist_to_workspace:
+          root: .circleci/ansible/
+          paths:
+            - inventory.txt
+      # Here's where you will add some code to rollback on failure      
+      - destroy-environment
   configure-infrastructure:
     docker:
       # Docker image here that supports Ansible
@@ -201,7 +201,7 @@ jobs:
       # Add ssh keys with fingerprint
       - add_ssh_keys:
           fingerprints:
-            - "32:b2:ca:37:11:38:d9:2b:f0:76:95:a5:b1:e7:dc:6b"
+            - "05:0b:92:eb:60:7b:e0:e8:c9:0a:cd:6c:9c:ee:ff:07"
       # attach workspace
       - attach_workspace:
           at: .circleci/ansible
@@ -232,5 +232,5 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      # - deploy-infrastructure
+      - deploy-infrastructure
       - configure-infrastructure
