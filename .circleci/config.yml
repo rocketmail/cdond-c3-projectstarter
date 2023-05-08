@@ -209,11 +209,14 @@ jobs:
           name: Install dependencies
           command: |
             apk add --update ansible
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip  
+            sudo ./aws/install
       - run:
           name: Configure server
           command: |
             cat inventory.txt
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
       # Here's where you will add some code to rollback on failure      
       - destroy-environment
 workflows:
