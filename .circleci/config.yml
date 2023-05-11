@@ -246,6 +246,10 @@ jobs:
       # Checkout code from git
       - checkout
       - run:
+          name: Install dependencies
+          command: |
+            pip install awscli
+      - run:
           name: Run migrations
           command: |
             # Your code here
@@ -269,7 +273,7 @@ jobs:
           paths:
             - project/backend/migration_file.txt
       # Here's where you will add some code to rollback on failure
-      - destroy-environment      
+      - destroy-environment
   # deploy-frontend:
   #   docker:
   #     # Docker image here that supports AWS CLI
