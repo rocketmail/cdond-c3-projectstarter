@@ -168,109 +168,107 @@ jobs:
   #     # - save_cache:
   #     #     paths: [backend/node_modules]
   #     #     key: backend-scan
-  deploy-infrastructure:
-    docker:
-      # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
-    steps:
-      # Checkout code from git
-      - checkout
-      - run: yum install -y tar gzip
-      - run:
-          name: Ensure back-end infrastructure exists
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/backend.yml \
-              --tags project=udapeople \
-              --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
-              
-      - run:
-          name: Ensure front-end infrastructure exist
-          command: |
-            aws cloudformation deploy \
-              --template-file .circleci/files/frontend.yml \
-              --tags project=udapeople \
-              --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
-              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
-      
-      - run:
-          name: Add back-end ip to ansible inventory
-          command: |
-            # Your code here
-            aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
-              --output text >> .circleci/ansible/inventory.txt
-            cat .circleci/ansible/inventory.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - project/.circleci/ansible/inventory.txt
-      # Here's where you will add some code to rollback on failure      
-      - destroy-environment
-  configure-infrastructure:
-    docker:
-      # Docker image here that supports Ansible
-      - image: python:3.11-rc-alpine
-    steps:
-      # Checkout code from git
-      - checkout
-      # Add ssh keys with fingerprint
-      - add_ssh_keys:
-          fingerprints:
-            - "05:0b:92:eb:60:7b:e0:e8:c9:0a:cd:6c:9c:ee:ff:07"
-      # attach workspace
-      - attach_workspace:
-          at: ~/
-      - run:
-          name: Install dependencies
-          command: |
-            apk add --update ansible
-            pip install awscli
-            # curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            # unzip awscliv2.zip  
-            # sudo ./aws/install
-      - run:
-          name: Configure server
-          command: |
-            cat .circleci/ansible/inventory.txt
-            ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
-      # Here's where you will add some code to rollback on failure      
-      - destroy-environment
-  # run-migrations:
+  # deploy-infrastructure:
   #   docker:
-  #     # Docker image here that supports NodeJS
-  #     - image: circleci/node:13.8.0
+  #     # Docker image here that supports AWS CLI
+  #     - image: amazon/aws-cli
   #   steps:
   #     # Checkout code from git
   #     - checkout
-  #     - restore_cache:
-  #         keys: [migration-result]
+  #     - run: yum install -y tar gzip
   #     - run:
-  #         name: Run migrations
+  #         name: Ensure back-end infrastructure exists
+  #         command: |
+  #           aws cloudformation deploy \
+  #             --template-file .circleci/files/backend.yml \
+  #             --tags project=udapeople \
+  #             --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7} \
+  #             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"
+              
+  #     - run:
+  #         name: Ensure front-end infrastructure exist
+  #         command: |
+  #           aws cloudformation deploy \
+  #             --template-file .circleci/files/frontend.yml \
+  #             --tags project=udapeople \
+  #             --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7} \
+  #             --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  
+      
+  #     - run:
+  #         name: Add back-end ip to ansible inventory
   #         command: |
   #           # Your code here
-  #           cd backend
-  #           npm install
-  #           npm run migrations > migrations_dump.txt
-  #     - run:
-  #         name: Send migration results to memstash
-  #         command: |
-  #           # Your code here
-  #           if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
-  #           then
-  #               echo "success" >> migration_file.txt
-  #           else
-  #               echo "failed" >> migration_file.txt
-  #           fi
-  #           cat migration_file.txt
+  #           aws ec2 describe-instances \
+  #             --query 'Reservations[*].Instances[*].PublicIpAddress' \
+  #             --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+  #             --output text >> .circleci/ansible/inventory.txt
+  #           cat .circleci/ansible/inventory.txt
   #     - persist_to_workspace:
   #         root: ~/
   #         paths:
-  #           - migration_file.txt
-  #     # Here's where you will add some code to rollback on failure
-  #     - destroy-environment      
+  #           - project/.circleci/ansible/inventory.txt
+  #     # Here's where you will add some code to rollback on failure      
+  #     - destroy-environment
+  # configure-infrastructure:
+  #   docker:
+  #     # Docker image here that supports Ansible
+  #     - image: python:3.11-rc-alpine
+  #   steps:
+  #     # Checkout code from git
+  #     - checkout
+  #     # Add ssh keys with fingerprint
+  #     - add_ssh_keys:
+  #         fingerprints:
+  #           - "05:0b:92:eb:60:7b:e0:e8:c9:0a:cd:6c:9c:ee:ff:07"
+  #     # attach workspace
+  #     - attach_workspace:
+  #         at: ~/
+  #     - run:
+  #         name: Install dependencies
+  #         command: |
+  #           apk add --update ansible
+  #           pip install awscli
+  #           # curl -s "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+  #           # unzip awscliv2.zip  
+  #           # sudo ./aws/install
+  #     - run:
+  #         name: Configure server
+  #         command: |
+  #           cat .circleci/ansible/inventory.txt
+  #           ansible-playbook -i .circleci/ansible/inventory.txt .circleci/ansible/configure-server.yml
+  #     # Here's where you will add some code to rollback on failure      
+  #     - destroy-environment
+  run-migrations:
+    docker:
+      # Docker image here that supports NodeJS
+      - image: circleci/node:13.8.0
+    steps:
+      # Checkout code from git
+      - checkout
+      - run:
+          name: Run migrations
+          command: |
+            # Your code here
+            cd backend
+            npm install
+            npm run migrations > migrations_dump.txt
+      - run:
+          name: Send migration results to memstash
+          command: |
+            # Your code here
+            if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
+            then
+                echo "success" >> migration_file.txt
+            else
+                echo "failed" >> migration_file.txt
+            fi
+            cat migration_file.txt
+      - persist_to_workspace:
+          root: ~/
+          paths:
+            - migration_file.txt
+      # Here's where you will add some code to rollback on failure
+      - destroy-environment      
   # deploy-frontend:
   #   docker:
   #     # Docker image here that supports AWS CLI
@@ -455,10 +453,11 @@ workflows:
       #     requires: [build-backend]
       # - scan-frontend:
       #     requires: [build-frontend]
-      - deploy-infrastructure
-          # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          # filters:
-          #   branches:
-          #     only: [test-feature-branch]
-      - configure-infrastructure:
-          requires: [deploy-infrastructure]
+      # - deploy-infrastructure
+      #     # requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+      #     # filters:
+      #     #   branches:
+      #     #     only: [test-feature-branch]
+      # - configure-infrastructure:
+      #     requires: [deploy-infrastructure]
+      - run-migrations
