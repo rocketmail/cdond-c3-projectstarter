@@ -291,9 +291,6 @@ jobs:
     steps:
       # Checkout code from git
       - checkout
-      # attach workspace
-      - attach_workspace:
-          at: ~/
       - run:
           name: Install dependencies
           command: |
@@ -301,7 +298,10 @@ jobs:
             yum install -y curl tar gzip sudo
             # Install Nodejs
             curl -sL https://rpm.nodesource.com/setup_13.x | sudo bash -
-            yum install -y nodejs
+            yum install -y nodejs npm
+      # attach workspace
+      - attach_workspace:
+          at: ~/
       - run:
           name: Get backend url
           command: |
@@ -341,12 +341,13 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            apk add --update ansible npm
+            apk add --update ansible npm curl tar gzip sudo
             pip install awscli
-            yum install -y curl tar gzip sudo
+            #apk install -y curl tar gzip sudo
             # Install Nodejs
             curl -sL https://rpm.nodesource.com/setup_13.x | sudo bash -
-            yum install -y nodejs
+            #yum install -y nodejs
+            apk add --update nodejs npm
       - run:
           name: Deploy backend
           command: |
