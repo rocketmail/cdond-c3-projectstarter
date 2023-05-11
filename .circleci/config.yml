@@ -32,13 +32,16 @@ commands:
           when: on_fail
           # Add when this will run
           command: |
-            cat migration_file.txt
-            if grep -q "success" migrations_file.txt
-            then
-                cd ~/project/backend
-                npm install
-                npm run migration:revert
-            fi
+            # cat ~/project/backend/migration_file.txt
+            # if grep -q "success" ~/project/backend/migrations_file.txt
+            # then
+            #     cd ~/project/backend
+            #     npm install
+            #     npm run migration:revert
+            # fi
+            cd ~/project/backend
+            npm install
+            npm run migration:revert
 jobs:
   # build-frontend:
   #   docker:
@@ -258,6 +261,7 @@ jobs:
           name: Run migrations
           command: |
             # Your code here
+            pwd
             cd backend
             npm install
             npm run migrations > migrations_dump.txt
@@ -265,20 +269,21 @@ jobs:
           name: Send migration results to memstash
           command: |
             # Your code here
+            pwd
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
-                echo "success" >> migration_file.txt
+                echo "success" >> ~/project/backend/migration_file.txt
             else
-                echo "failed" >> migration_file.txt
+                echo "failed" >> ~/project/backend/migration_file.txt
             fi
-            cat migration_file.txt
-            pwd
+            cat ~/project/backend/migration_file.txt
       - persist_to_workspace:
           root: ~/
           paths:
             - project/backend/migration_file.txt
       # Here's where you will add some code to rollback on failure
-      # - destroy-environment
+      - destroy-environment
+      - revert-migrations
   # deploy-frontend:
   #   docker:
   #     # Docker image here that supports AWS CLI
