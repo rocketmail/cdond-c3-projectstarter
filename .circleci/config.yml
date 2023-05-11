@@ -263,10 +263,11 @@ jobs:
                 echo "failed" >> migration_file.txt
             fi
             cat migration_file.txt
+            pwd
       - persist_to_workspace:
           root: ~/
           paths:
-            - migration_file.txt
+            - project/backend/migration_file.txt
       # Here's where you will add some code to rollback on failure
       - destroy-environment      
   # deploy-frontend:
