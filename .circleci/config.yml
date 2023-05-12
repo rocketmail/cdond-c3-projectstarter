@@ -362,8 +362,9 @@ jobs:
           command: |
             # your code here
             cd backend
-            npm install -g n
-            n 13.8.0
+            # npm install typescript -g n
+            # n 13.8.0
+            npm install
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
