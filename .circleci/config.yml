@@ -350,8 +350,9 @@ jobs:
           command: |
             # your code here
             apk update
-            apk add --update ansible npm curl tar gzip sudo bash
+            apk add --update ansible curl tar gzip sudo bash nodejs npm
             apk add python3 py3-pip
+            pip install awscli
             # Install Nodejs
             # curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -
             # yum install -y nodejs
@@ -361,8 +362,7 @@ jobs:
           command: |
             # your code here
             cd backend
-            npm install -g n
-            n 13.8.0
+            npm install
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
