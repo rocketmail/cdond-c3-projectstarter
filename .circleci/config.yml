@@ -27,6 +27,8 @@ commands:
     steps:
       - attach_workspace:
           at: ~/
+      - restore_cache:
+          keys: [backend-build]          
       - run:
           name: Revert migrations
           when: on_fail
@@ -37,11 +39,11 @@ commands:
             # then
             #     cd ~/project/backend
             #     npm install
-            #     npm run migration:revert
+            #     npm run migrations:revert
             # fi
             cd ~/project/backend
             npm install
-            npm run migration:revert
+            npm run migrations:revert
 jobs:
   build-frontend:
     docker:
@@ -319,6 +321,7 @@ jobs:
           command: |
             # your code here
             cd frontend
+            npm install
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
@@ -352,12 +355,13 @@ jobs:
             # Install Nodejs
             curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -
             #yum install -y nodejs
-            apk add --update nodejs npm
+            apk add --update nodejs
       - run:
           name: Deploy backend
           command: |
             # your code here
             cd backend
+            npm install
             npm i
             npm run build
             cd ..
