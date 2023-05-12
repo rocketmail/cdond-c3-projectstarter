@@ -353,8 +353,8 @@ jobs:
             pip install awscli
             #apk install -y curl tar gzip sudo
             # Install Nodejs
-            curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -
-            #yum install -y nodejs
+            # curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -
+            # yum install -y nodejs
             apk add --update nodejs
       - run:
           name: Deploy backend
