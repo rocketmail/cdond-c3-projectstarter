@@ -408,10 +408,13 @@ jobs:
       - image: alpine:latest
     steps:
       - checkout
-      - run: 
+      - attach_workspace:
+          at: ~/
+      - run:
           name: Install dependencies
           command: |
-            apk add --update curl
+            apk add --update curl bash nodejs npm 
+            pip install awscli
       - run:
           name: Backend smoke test.
           command: |
