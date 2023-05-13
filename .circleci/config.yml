@@ -266,6 +266,7 @@ jobs:
             # Your code here
             pwd
             cd backend
+            cat .env
             npm install
             npm run migrations > migrations_dump.txt
       - run:
