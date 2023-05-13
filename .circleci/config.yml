@@ -416,7 +416,8 @@ jobs:
           name: Get backend url
           command: |
             export BACKEND_IP=$(cat ~/project/.circleci/ansible/inventory.txt | sed 1d)
-            export URL="http://${BACKEND_IP}:3030"
+            #export URL="http://${BACKEND_IP}:3030"
+            export URL="http://100.25.214.233:3030"
             echo ${URL}
       - run:
           name: Backend smoke test.
