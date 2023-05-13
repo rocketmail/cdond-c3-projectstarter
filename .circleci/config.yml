@@ -350,19 +350,23 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "05:0b:92:eb:60:7b:e0:e8:c9:0a:cd:6c:9c:ee:ff:07"
-      - restore_cache:
-          keys: [backend-build]
       # attach workspace
       - attach_workspace:
           at: ~/
+      # - restore_cache:
+      #     keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
+            pwd
             sudo apt -y update
             sudo apt install -y tar gzip curl unzip
             sudo apt install -y software-properties-common
             sudo apt install -y python3 python3-pip
-            python3 -m pip install --upgrade pip --user ansible
+            python 3 -m pip -V
+            pwd
+            python3 -m pip install --upgrade pip setuptools wheel
+            python3 -m pip install --user ansible
       - run:
           name: Install aws-cli
           command: |
