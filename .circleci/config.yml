@@ -290,7 +290,8 @@ jobs:
   deploy-frontend:
     docker:
       # Docker image here that supports AWS CLI
-      - image: amazon/aws-cli
+      #- image: amazon/aws-cli
+      - image: cimg/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
@@ -298,20 +299,26 @@ jobs:
           name: Install dependencies
           command: |
             # your code here
-            yum install -y curl npm tar gzip sudo
-            # Install Nodejs
-            curl -sL https://rpm.nodesource.com/setup_13.x | sudo bash -
-            yum install -y nodejs
+            # yum install -y curl npm tar gzip sudo
+            # # Install Nodejs
+            # curl -sL https://rpm.nodesource.com/setup_13.x | sudo bash -
+            # yum install -y nodejs
+            sudo apt -y update
+            sudo apt install -y tar gzip curl unzip
+      - run:
+          name: Install aws-cli
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       # attach workspace
       - attach_workspace:
           at: ~/
-      - restore_cache:
-          keys: [frontend-build]
       - run:
           name: Get backend url
           command: |
             # your code here
-            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Name,Values=backend-${CIRCLE_WORKFLOW_ID:0:7}" --output text)
+            export BACKEND_IP=$(cat ~/project/.circleci/ansible/inventory.txt | sed 1d)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
@@ -332,7 +339,8 @@ jobs:
   deploy-backend:
     docker:
       # Docker image here that supports Ansible
-      - image: python:3.11-rc-alpine
+      # - image: python:3.11-rc-alpine
+      - image: cimg/node:13.8.0
     steps:
       # Checkout code from git
       - checkout
@@ -340,23 +348,37 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "05:0b:92:eb:60:7b:e0:e8:c9:0a:cd:6c:9c:ee:ff:07"
-      # attach workspace
-      - attach_workspace:
-          at: ~/
-      - restore_cache:
-          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
-            # your code here
-            apk update
-            apk add --update ansible curl tar gzip sudo bash nodejs npm
-            apk add python3 py3-pip
-            pip install awscli
-            # Install Nodejs
-            # curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -
-            # yum install -y nodejs
-            # apk add --update nodejs
+            sudo apt -y update
+            sudo apt install -y tar gzip curl unzip
+            sudo apt install -y software-properties-common
+            sudo apt install -y python3 python3-pip
+            python3 -m pip install --user ansible
+      - run:
+          name: Install aws-cli
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - restore_cache:
+          keys: [backend-build]
+      # attach workspace
+      - attach_workspace:
+          at: ~/
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       # your code here
+      #       apk update
+      #       apk add --update ansible curl tar gzip sudo bash nodejs npm
+      #       apk add python3 py3-pip
+      #       pip install awscli
+      #       # Install Nodejs
+      #       # curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -
+      #       # yum install -y nodejs
+      #       # apk add --update nodejs
       - run:
           name: Deploy backend
           command: |
@@ -364,7 +386,7 @@ jobs:
             cd backend
             # npm install typescript -g n
             # n 13.8.0
-            npm install
+            npm i
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
