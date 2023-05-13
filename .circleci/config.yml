@@ -284,7 +284,7 @@ jobs:
           root: ~/
           paths:
             - project/backend/migration_file.txt
-      # Here's where you will add some code to rollback on failure
+      # Here's where you will add some code to rollback on failure OK
       - destroy-environment
       - revert-migrations
   deploy-frontend:
