@@ -90,7 +90,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [frontend-build]
+          keys: [frontend-test]
       # Your job code here
       - run:
           name: Front-end build
@@ -111,7 +111,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [backend-build]
+          keys: [backend-test]
       # Your job code here
       - run:
           name: Back-end build
@@ -133,7 +133,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [frontend-build]
+          keys: [frontend-scan]
       # Your job code here
       - run:
           name: Front-end build
@@ -158,7 +158,7 @@ jobs:
       - checkout
       # Restore from cache
       - restore_cache:
-          keys: [backend-build]
+          keys: [backend-scan]
       # Your job code here
       - run:
           name: Back-end build
@@ -362,11 +362,8 @@ jobs:
       - add_ssh_keys:
           fingerprints:
             - "05:0b:92:eb:60:7b:e0:e8:c9:0a:cd:6c:9c:ee:ff:07"
-      # attach workspace
-      - attach_workspace:
-          at: ~/
-      # - restore_cache:
-      #     keys: [backend-build]
+      - restore_cache:
+          keys: [backend-build]
       - run:
           name: Install dependencies
           command: |
@@ -397,6 +394,9 @@ jobs:
       #       # curl -sL https://deb.nodesource.com/setup_13.x | sudo bash -
       #       # yum install -y nodejs
       #       # apk add --update nodejs
+      # attach workspace
+      - attach_workspace:
+          at: ~/      
       - run:
           name: Deploy backend
           command: |
