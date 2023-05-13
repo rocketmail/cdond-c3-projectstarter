@@ -405,7 +405,7 @@ jobs:
       - revert-migrations
   smoke-test:
     docker:
-      - image: alpine:latest
+      - image: python:3.11-rc-alpine
     steps:
       - checkout
       - attach_workspace:
