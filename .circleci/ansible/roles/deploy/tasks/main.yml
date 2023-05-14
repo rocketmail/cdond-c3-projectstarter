@@ -3,26 +3,26 @@
 - name: create directory
   become: true
   file:
-    path: /home/ubuntu/web
+    path: /home/ubuntu/backend
     state: directory
     mode: 0755
 - name: copy backend files
   become: true
   copy:
-    src:  ~/project/artifact.tar.gz
-    dest: /home/ubuntu/web/artifact.tar.gz
+    src:  /home/circleci/project/artifact.tar.gz
+    dest: /home/ubuntu/backend/
 - name: extract backend files
   become: true
   shell: |
-    cd /home/ubuntu/web
+    cd /home/ubuntu/backend
     tar -vxf artifact.tar.gz
-    #rm artifact.tar.gz
+    rm artifact.tar.gz
 - name: start node
   become: true
   shell: |
-    cd /home/ubuntu/web
-    npm install
+    cd /home/ubuntu/backend
+    sudo npm install
     pm2 stop default
     pm2 start npm -- start
-    cd dist
-    pm2 start main.js --update-env
+    # cd dist
+    # pm2 start main.js --update-env
