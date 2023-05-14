@@ -9,16 +9,16 @@
 - name: copy backend files
   become: true
   copy:
-    src:  /home/circleci/project/artifact.tar.gz
+    src:  ~/project/artifact.tar.gz
     dest: /home/ubuntu/backend/artifact.tar.gz
 - name: extract backend files
   become: true
   shell: |
     cd /home/ubuntu/backend
-    tar -vxf artifact.tar.gz
+    tar -xvf artifact.tar.gz
     ls -la
     rm artifact.tar.gz
-- name: "npm install and build"
+- name: npm install and build
   become: true
   shell: |
     npm install

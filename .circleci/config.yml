@@ -346,7 +346,7 @@ jobs:
             npm i
             npm run build
             tar -czvf artifact-"${CIRCLE_WORKFLOW_ID:0:7}".tar.gz dist
-            aws s3 sync dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7}
+            aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
       # Here's where you will add some code to rollback on failure      
       - destroy-environment
       - revert-migrations
@@ -356,6 +356,7 @@ jobs:
       # Docker image here that supports Ansible
       # - image: python:3.11-rc-alpine
       - image: cimg/node:13.8.0
+      - image: amazon/aws-cli:latest
     steps:
       # Checkout code from git
       - checkout
@@ -377,12 +378,13 @@ jobs:
             pwd
             python3 -m pip install --upgrade pip setuptools wheel
             python3 -m pip install --user ansible
-      - run:
-          name: Install aws-cli
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+            npm install pm2 -g
+      # - run:
+      #     name: Install aws-cli
+      #     command: |
+      #       curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+      #       unzip awscliv2.zip
+      #       sudo ./aws/install
       # - run:
       #     name: Install dependencies
       #     command: |
@@ -418,8 +420,6 @@ jobs:
             # echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
             # echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cd backend
-            ls
-            cat .env
             # npm install typescript -g n
             # n 13.8.0
             npm i
