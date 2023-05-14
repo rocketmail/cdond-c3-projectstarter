@@ -265,7 +265,7 @@ jobs:
           command: |
             # Your code here
             pwd
-            echo ENVIRONMENT=production >> "backend/.env"
+            echo ENVIRONMENT=local >> "backend/.env"
             echo TYPEORM_CONNECTION=postgres >> "backend/.env"
             echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
             echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
@@ -396,22 +396,26 @@ jobs:
       #       # apk add --update nodejs
       # attach workspace
       - attach_workspace:
-          at: ~/      
+          at: ~/
+      - run:
+          name: Create backend .env
+          command: |
+            echo -e "NODE_ENV=local\nVERSION=1\nTYPEORM_CONNECTION=${TYPEORM_CONNECTION}\nTYPEORM_MIGRATIONS_DIR=${TYPEORM_MIGRATIONS_DIR}\nTYPEORM_ENTITIES=${TYPEORM_ENTITIES}\nTYPEORM_MIGRATIONS=${TYPEORM_MIGRATIONS}\nTYPEORM_HOST=${TYPEORM_HOST}\nTYPEORM_PORT=${TYPEORM_PORT}\nTYPEORM_USERNAME=${TYPEORM_USERNAME}\nTYPEORM_PASSWORD=${TYPEORM_PASSWORD}\nTYPEORM_DATABASE=${TYPEORM_DATABASE}" >> backend/.env
       - run:
           name: Deploy backend
           command: |
             # your code here
-            echo ENVIRONMENT=production >> "backend/.env"
-            echo TYPEORM_CONNECTION=postgres >> "backend/.env"
-            echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
-            echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
-            echo NODE_ENV=production >> "backend/.env"
-            echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
-            echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
-            echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
-            echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
-            echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
+            # echo ENVIRONMENT=production >> "backend/.env"
+            # echo TYPEORM_CONNECTION=postgres >> "backend/.env"
+            # echo TYPEORM_ENTITIES=./src/modules/domain/**/*.entity.ts >> "backend/.env"
+            # echo TYPEORM_MIGRATIONS=./src/migrations/*.ts >> "backend/.env"
+            # echo TYPEORM_MIGRATIONS_DIR=./src/migrations >> "backend/.env"
+            # echo NODE_ENV=production >> "backend/.env"
+            # echo TYPEORM_HOST=$TYPEORM_HOST >> "backend/.env"
+            # echo TYPEORM_PORT=$TYPEORM_PORT >> "backend/.env"
+            # echo TYPEORM_USERNAME=$TYPEORM_USERNAME >> "backend/.env"
+            # echo TYPEORM_PASSWORD=$TYPEORM_PASSWORD >> "backend/.env"
+            # echo TYPEORM_DATABASE=$TYPEORM_DATABASE >> "backend/.env"
             cd backend
             ls
             cat .env
