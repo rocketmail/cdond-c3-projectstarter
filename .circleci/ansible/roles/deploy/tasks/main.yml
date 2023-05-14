@@ -8,35 +8,15 @@
     # mode: 0755
 - name: copy backend files
   become: yes
-  copy:
+  unarchive:
     src:  ~/project/artifact.tar.gz
-    dest: /home/ubuntu/backend/artifact.tar.gz
-- name: extract backend files
-  become: yes
-  shell: |
-    cd /home/ubuntu/backend
-    tar -xvf artifact.tar.gz
-    ls -la
-    rm artifact.tar.gz
+    dest: /home/ubuntu/backend
+    owner: ubuntu
 - name: npm install and build
   become: yes
   shell: |
     npm install
     cd /home/ubuntu/backend
-    # npm run build
-    pm2 stop default
-    # pm2 start npm --name backend -- start
+    pm2 stop backend
+    pm2 delete backend
     pm2 start npm -- start
-  args:  
-    chdir: 
-- name: start node
-  become: yes
-  shell: |
-    cd /home/ubuntu/backend/dist
-    # npm install
-    # npm run build
-    # pm2 stop default
-    # pm2 start npm --name backend -- start
-    # cd dist
-    # pm2 start main.js --update-env
-    pm2 start -f ./main.js

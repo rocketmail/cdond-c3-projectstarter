@@ -455,7 +455,7 @@ jobs:
               return 0
             else
               return 1
-            fi            
+            fi
       - run:
           name: Backend smoke test.
           command: |
@@ -469,7 +469,6 @@ jobs:
             else
               return 1
             fi
-
       - destroy-environment
       - revert-migrations
   # cloudfront-update:
@@ -552,5 +551,5 @@ workflows:
           requires: [run-migrations]
       - deploy-backend:
           requires: [run-migrations]
-      # - smoke-test:
-      #     requires: [deploy-backend, deploy-frontend]
+      - smoke-test:
+          requires: [deploy-backend, deploy-frontend]
