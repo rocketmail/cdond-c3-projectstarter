@@ -1,5 +1,5 @@
 ---
-# reference from https://knowledge.udacity.com/questions/907729
+#   Refer from https://knowledge.udacity.com/questions/907729
 - name: create directory
   become: true
   file:
