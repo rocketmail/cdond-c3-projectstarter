@@ -1,43 +1,22 @@
 ---
 #   Refer from https://knowledge.udacity.com/questions/907729
 - name: create directory
-  become: true
+  become: yes
   file:
     path: /home/ubuntu/backend
     state: directory
     # mode: 0755
 - name: copy backend files
-  become: true
-  copy:
+  become: yes
+  unarchive:
     src:  ~/project/artifact.tar.gz
-    dest: /home/ubuntu/backend/artifact.tar.gz
+    dest: /home/ubuntu/backend
     owner: ubuntu
-- name: extract backend files
-  become: true
-  shell: |
-    cd /home/ubuntu/backend
-    tar -xvf artifact.tar.gz
-    ls -la
-    rm artifact.tar.gz
 - name: npm install and build
-  become: true
+  become: yes
   shell: |
-    cd /home/ubuntu/backend
     npm install
-    # npm run build
-    pm2 stop default
-    # pm2 start npm --name backend -- start
+    cd /home/ubuntu/backend
+    pm2 stop backend
+    pm2 delete backend
     pm2 start npm -- start
-  args:  
-    chdir: 
-- name: start node
-  become: true
-  shell: |
-    cd /home/ubuntu/backend/dist
-    # npm install
-    # npm run build
-    # pm2 stop default
-    # pm2 start npm --name backend -- start
-    # cd dist
-    # pm2 start main.js --update-env
-    pm2 start -f ./main.js
