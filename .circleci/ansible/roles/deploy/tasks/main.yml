@@ -16,7 +16,7 @@
   shell: |
     cd /home/ubuntu/web
     tar -vxf artifact.tar.gz
-    rm artifact.tar.gz
+    #rm artifact.tar.gz
 - name: start node
   become: true
   shell: |
