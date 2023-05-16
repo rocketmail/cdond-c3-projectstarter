@@ -520,7 +520,7 @@ jobs:
               echo OldWorkflowID: "${OldWorkflowID}"
               echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
               ## Fetch the stack names
-              if [[ "${CIRCLE_WORKFLOW_ID:0:7}" =~ "${OldWorkflowID}" ]]
+              if [[ "${CIRCLE_WORKFLOW_ID:0:7}" != "${OldWorkflowID}" ]]
               then
                 echo "remove bucket"
                 aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
